@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Page</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>Debug Page</h1>
+    <div id="debug"></div>
+    <script>
+        const debug = document.getElementById('debug');
+        
+        // Check Telegram WebApp
+        if (window.Telegram) {
+            debug.innerHTML += '<p>✅ Telegram WebApp loaded</p>';
+            if (window.Telegram.WebApp) {
+                debug.innerHTML += '<p>✅ Telegram.WebApp available</p>';
+                window.Telegram.WebApp.ready();
+                debug.innerHTML += '<p>✅ Telegram.WebApp.ready() called</p>';
+            } else {
+                debug.innerHTML += '<p>❌ Telegram.WebApp not available</p>';
+            }
+        } else {
+            debug.innerHTML += '<p>❌ Telegram not loaded</p>';
+        }
+        
+        // Check user data
+        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            debug.innerHTML += `<p>✅ User: ${user.first_name} (ID: ${user.id})</p>`;
+        } else {
+            debug.innerHTML += '<p>❌ No user data</p>';
+        }
+    </script>
+</body>
+</html>
