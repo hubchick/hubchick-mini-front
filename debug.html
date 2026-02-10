@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hubchik Debug</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0;">
+    <h1>🔍 Hubchik Debug Page</h1>
+    
+    <div id="debug-info" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <h2>Проверка компонентов:</h2>
+        <div id="component-status">Загрузка...</div>
+    </div>
+    
+    <div style="background: white; padding: 15px; border-radius: 10px;">
+        <h3>JavaScript консоль:</h3>
+        <div id="console-output" style="background: #f8f8f8; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+    </div>
+    
+    <script>
+        console.log('=== Hubchik Debug Start ===');
+        
+        // Проверяем загрузку скриптов
+        const scripts = document.querySelectorAll('script[src]');
+        let scriptCount = 0;
+        scripts.forEach(script => {
+            if (script.src.includes('telegram-web-app.js')) {
+                scriptCount++;
+            }
+        });
+        
+        document.getElementById('component-status').innerHTML = `Найдено скриптов: ${scriptCount}`;
+        
+        // Проверяем React
+        setTimeout(() => {
+            if (document.getElementById('root')) {
+                document.getElementById('component-status').innerHTML += '<br>✅ React root найден';
+            } else {
+                document.getElementById('component-status').innerHTML += '<br>❌ React root не найден';
+            }
+        }, 1000);
+        
+        // Проверяем Telegram WebApp
+        setTimeout(() => {
+            if (window.Telegram?.WebApp) {
+                document.getElementById('component-status').innerHTML += '<br>✅ Telegram WebApp доступен';
+                
+                const user = window.Telegram.WebApp.initDataUnsafe.user;
+                if (user) {
+                    document.getElementById('component-status').innerHTML += `<br>✅ Пользователь: ${user.first_name} ${user.last_name || ''}`;
+                } else {
+                    document.getElementById('component-status').innerHTML += '<br>❌ Данные пользователя не найдены';
+                }
+            } else {
+                document.getElementById('component-status').innerHTML += '<br>❌ Telegram WebApp не доступен';
+            }
+        }, 2000);
+        
+        // Выводим все console.log в div
+        const originalLog = console.log;
+        console.log = function(...args) {
+            const message = args.join(' ');
+            const output = document.getElementById('console-output');
+            if (output) {
+                output.innerHTML += message + '<br>';
+                output.scrollTop = output.scrollHeight;
+            }
+            return originalLog.apply(console, args);
+        };
+        
+        console.log('Проверка завершена');
+    </script>
+</body>
+</html>

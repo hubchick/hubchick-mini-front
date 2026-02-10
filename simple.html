@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hubchik App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            text-align: center; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .status {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Hubchik Mini App</h1>
+        <div class="status" id="status">Загрузка...</div>
+        <div class="status" id="telegram">Telegram: проверка...</div>
+        <div class="status" id="user">Пользователь: проверка...</div>
+        <button onclick="testAPI()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Тест API</button>
+        <div id="api-result"></div>
+    </div>
+
+    <script>
+        // Initialize Telegram WebApp
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            
+            document.getElementById('telegram').innerHTML = '✅ Telegram WebApp готов';
+            
+            const user = window.Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('user').innerHTML = `✅ Пользователь: ${user.first_name} ${user.last_name || ''}`;
+            } else {
+                document.getElementById('user').innerHTML = '❌ Нет данных пользователя';
+            }
+        } else {
+            document.getElementById('telegram').innerHTML = '❌ Telegram WebApp не доступен';
+        }
+        
+        document.getElementById('status').innerHTML = '✅ Приложение загружено';
+        
+        function testAPI() {
+            const result = document.getElementById('api-result');
+            result.innerHTML = 'Проверка API...';
+            
+            fetch('/api/health')
+                .then(response => response.json())
+                .then(data => {
+                    result.innerHTML = `✅ API работает: ${JSON.stringify(data)}`;
+                })
+                .catch(error => {
+                    result.innerHTML = `❌ Ошибка API: ${error.message}`;
+                });
+        }
+    </script>
+</body>
+</html>

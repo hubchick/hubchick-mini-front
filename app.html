@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubchik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header .user-info {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card p {
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+        }
+        
+        .bottom-nav .nav-buttons {
+            margin: 0;
+            padding: 0 20px;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+        
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 HUBCHIK</h1>
+            <div class="user-info" id="userInfo">Загрузка...</div>
+        </div>
+        
+        <div class="content">
+            <!-- Главная страница -->
+            <div class="page active" id="home-page">
+                <div class="card">
+                    <h3>🏠 Главная</h3>
+                    <p>Добро пожаловать в Hubchik - вашу систему управления записями и задачами!</p>
+                </div>
+                
+                <div class="card">
+                    <h3>📊 Статистика</h3>
+                    <p>• 5 активных записей<br>• 3 задачи на сегодня<br>• 12 клиентов</p>
+                </div>
+                
+                <div class="card">
+                    <h3>🔔 Уведомления</h3>
+                    <p>Новых уведомлений нет</p>
+                </div>
+            </div>
+            
+            <!-- Страница входа -->
+            <div class="page" id="login-page">
+                <div class="card">
+                    <h3>🔐 Вход в систему</h3>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="loginEmail" placeholder="test@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль:</label>
+                            <input type="password" id="loginPassword" placeholder="•••••" required>
+                        </div>
+                        <button type="submit" class="btn">Войти</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Страница регистрации -->
+            <div class="page" id="registration-page">
+                <div class="card">
+                    <h3>📝 Регистрация</h3>
+                    <form id="registrationForm">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="regEmail" placeholder="test@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль:</label>
+                            <input type="password" id="regPassword" placeholder="•••••" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Подтвердите пароль:</label>
+                            <input type="password" id="regConfirmPassword" placeholder="•••••" required>
+                        </div>
+                        <button type="submit" class="btn">Зарегистрироваться</button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Страница профиля -->
+            <div class="page" id="profile-page">
+                <div class="card">
+                    <h3>👤 Профиль</h3>
+                    <div id="profileInfo">Загрузка...</div>
+                </div>
+                
+                <div class="card">
+                    <h3>⚙️ Настройки</h3>
+                    <p>• Язык: Русский<br>• Уведомления: Включены<br>• Тема: Авто</p>
+                </div>
+            </div>
+            
+            <!-- Страница задач -->
+            <div class="page" id="tasks-page">
+                <div class="card">
+                    <h3>📋 Задачи</h3>
+                    <p>• Позвонить клиенту<br>• Подготовить материалы<br>• Обновить календарь</p>
+                </div>
+                
+                <div class="card">
+                    <h3>📅 Сегодня</h3>
+                    <p>3 активные задачи</p>
+                </div>
+            </div>
+            
+            <!-- Страница настроек -->
+            <div class="page" id="settings-page">
+                <div class="card">
+                    <h3>⚙️ Настройки</h3>
+                    <p>• Язык приложения<br>• Уведомления<br>• Тема оформления<br>• Экспорт данных</p>
+                </div>
+                
+                <div class="card">
+                    <h3>📱 О приложении</h3>
+                    <p>Hubchik v1.0.0<br>Система управления записями</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Нижняя навигация -->
+    <div class="bottom-nav">
+        <div class="nav-buttons">
+            <a href="#" class="nav-btn active" data-page="home">🏠 Главная</a>
+            <a href="#" class="nav-btn" data-page="login">🔐 Вход</a>
+            <a href="#" class="nav-btn" data-page="registration">📝 Регистрация</a>
+            <a href="#" class="nav-btn" data-page="profile">👤 Профиль</a>
+            <a href="#" class="nav-btn" data-page="tasks">📋 Задачи</a>
+            <a href="#" class="nav-btn" data-page="settings">⚙️ Настройки</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('=== Hubchik App Start ===');
+        
+        // Инициализация Telegram WebApp
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+            window.Telegram.WebApp.enableClosingConfirmation();
+        }
+        
+        // Получение данных пользователя
+        function initUserInfo() {
+            const userInfo = document.getElementById('userInfo');
+            const profileInfo = document.getElementById('profileInfo');
+            
+            if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+                const user = window.Telegram.WebApp.initDataUnsafe.user;
+                const userName = `${user.first_name} ${user.last_name || ''}`.trim();
+                userInfo.textContent = `👤 ${userName}`;
+                profileInfo.innerHTML = `
+                    <strong>${userName}</strong><br>
+                    📧 ${user.username || 'N/A'}<br>
+                    🆔 ID: ${user.id}
+                `;
+            } else {
+                userInfo.textContent = '👤 Тестовый пользователь';
+                profileInfo.innerHTML = `
+                    <strong>Тестовый пользователь</strong><br>
+                    📧 test@example.com<br>
+                    🆔 12345
+                `;
+            }
+        }
+        
+        // Навигация
+        function initNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const pages = document.querySelectorAll('.page');
+            
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Убираем активный класс у всех кнопок и страниц
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    pages.forEach(p => p.classList.remove('active'));
+                    
+                    // Добавляем активный класс к текущей кнопке и странице
+                    btn.classList.add('active');
+                    const pageId = btn.dataset.page + '-page';
+                    const page = document.getElementById(pageId);
+                    if (page) {
+                        page.classList.add('active');
+                    }
+                });
+            });
+        }
+        
+        // Формы
+        function initForms() {
+            // Форма входа
+            document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Вход выполнен успешно!');
+                showPage('home');
+            });
+            
+            // Форма регистрации
+            document.getElementById('registrationForm')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Пароли не совпадают!');
+                    return;
+                }
+                
+                alert('Регистрация выполнена успешно!');
+                showPage('home');
+            });
+        }
+        
+        // Показать страницу
+        function showPage(pageName) {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const pages = document.querySelectorAll('.page');
+            
+            navButtons.forEach(b => b.classList.remove('active'));
+            pages.forEach(p => p.classList.remove('active'));
+            
+            const activeBtn = document.querySelector(`[data-page="${pageName}"]`);
+            const activePage = document.getElementById(`${pageName}-page`);
+            
+            if (activeBtn) activeBtn.classList.add('active');
+            if (activePage) activePage.classList.add('active');
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            initUserInfo();
+            initNavigation();
+            initForms();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubchik Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 HUBCHIK</h1>
+        <div class="status" id="status">Загрузка...</div>
+        
+        <div class="nav-buttons">
+            <a href="/" class="nav-btn">🏠 Главная</a>
+            <a href="/login" class="nav-btn">🔐 Вход</a>
+            <a href="/registration" class="nav-btn">📝 Регистрация</a>
+            <a href="/profile" class="nav-btn">👤 Профиль</a>
+            <a href="/tasks" class="nav-btn">📋 Задачи</a>
+            <a href="/settings" class="nav-btn">⚙️ Настройки</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('=== Hubchik Test Page ===');
+        
+        // Проверка Telegram WebApp
+        setTimeout(() => {
+            const status = document.getElementById('status');
+            
+            if (window.Telegram?.WebApp) {
+                status.innerHTML = '✅ Telegram WebApp доступен';
+                
+                const user = window.Telegram.WebApp.initDataUnsafe.user;
+                if (user) {
+                    status.innerHTML += `<br>✅ Пользователь: ${user.first_name} ${user.last_name || ''}`;
+                } else {
+                    status.innerHTML += '<br>⚠️ Данные пользователя не найдены';
+                }
+                
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            } else {
+                status.innerHTML = '⚠️ Telegram WebApp не доступен (тестовый режим)';
+            }
+        }, 1000);
+        
+        // Проверка всех ссылок
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                console.log('Переход на:', e.target.href);
+            });
+        });
+    </script>
+</body>
+</html>
